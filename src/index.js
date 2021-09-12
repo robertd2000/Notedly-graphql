@@ -1,8 +1,14 @@
 // index.js
 // This is the main entry point of our application
+// notedlygraphql1209
 const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
 const jwt = require('jsonwebtoken');
+const helmet = require('helmet');
+const cors = require('cors');
+
+const depthLimit = require('graphql-depth-limit');
+const { createComplexityLimitRule } = require('graphql-validation-complexity');
 require('dotenv').config();
 
 const db = require('./db');
@@ -25,16 +31,18 @@ const getUser = token => {
 };
 
 const app = express();
+app.use(helmet());
+app.use(cors());
 
 db.connect(DB_HOST);
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  validationRules: [depthLimit(5), createComplexityLimitRule(1000)],
   context: ({ req }) => {
     const token = req.headers.authorization;
     const user = getUser(token);
-    console.log(user);
     return { models, user };
   }
 });
