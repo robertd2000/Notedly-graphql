@@ -34,7 +34,7 @@ const app = express();
 app.use(helmet());
 app.use(cors());
 
-db.connect(DB_HOST);
+db.connect(DB_HOST, { useNewUrlParser: true });
 
 const server = new ApolloServer({
   typeDefs,
