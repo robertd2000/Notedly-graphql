@@ -1,13 +1,16 @@
 const mongoose = require('mongoose');
 
+console.log(mongoose.Schema.Types.ObjectId);
+// Define the note's database schema
 const noteSchema = new mongoose.Schema(
   {
     content: {
       type: String,
       required: true
     },
+    // reference the author's object ID
     author: {
-      type: mongoose.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true
     },
@@ -23,9 +26,12 @@ const noteSchema = new mongoose.Schema(
     ]
   },
   {
-    // Присваиваем поля createdAt и updatedAt с типом данных
+    // Assigns createdAt and updatedAt fields with a Date type
     timestamps: true
   }
 );
+
+// Define the 'Note' model with the schema
 const Note = mongoose.model('Note', noteSchema);
+// Export the module
 module.exports = Note;

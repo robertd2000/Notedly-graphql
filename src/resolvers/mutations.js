@@ -9,13 +9,17 @@ require('dotenv').config();
 const gravatar = require('../util/gravatar');
 
 module.exports = {
-  newNote: async (parents, args, { models, user }) => {
+  newNote: async (parent, args, { models, user }) => {
     if (!user) {
-      return new AuthenticationError('You must be signed in to create a note');
+      throw new AuthenticationError('You must be signed in to create a note');
     }
+
+    console.log(user);
+
     return await models.Note.create({
       content: args.content,
-      author: mongoose.Types.ObjectId(user.id)
+      author: mongoose.Types.ObjectId(user._id),
+      favoriteCount: 0
     });
   },
   deleteNote: async (parents, { id }, { models, user }) => {
@@ -25,7 +29,7 @@ module.exports = {
 
     const note = await models.Note.findById(id);
 
-    if (note && String(note.author) !== user.id) {
+    if (note && String(note.author) !== user._id) {
       throw new ForbiddenError("You don't have permissions to delete the note");
     }
     try {
